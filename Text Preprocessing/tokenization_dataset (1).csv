@@ -1,0 +1,11 @@
+id,input_text,tokens
+1,NLP is amazing,"['NLP','is','amazing']"
+2,I love machine learning,"['I','love','machine','learning']"
+3,Tokenization breaks text into words,"['Tokenization','breaks','text','into','words']"
+4,Python is used in NLP,"['Python','is','used','in','NLP']"
+5,Deep learning uses neural networks,"['Deep','learning','uses','neural','networks']"
+6,Chatbots understand human language,"['Chatbots','understand','human','language']"
+7,Data preprocessing is important,"['Data','preprocessing','is','important']"
+8,Tokenization is the first step,"['Tokenization','is','the','first','step']"
+9,Natural language processing is powerful,"['Natural','language','processing','is','powerful']"
+10,AI models learn from data,"['AI','models','learn','from','data']"
