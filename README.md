@@ -1910,6 +1910,419 @@ Problems with BoW:
 
 📌 **End of Part-1: Text Representation Basics**
 
+# 📘 Text Representation – N-grams, TF-IDF & Custom Features
+
+(Simple English + Conceptual Notes – Part 2)
+
+---
+
+## 1️⃣ What are N-grams?
+
+### Definition
+
+N-grams are continuous sequences of **N words** taken from a sentence.
+
+* **Unigram (1-gram)** → single word
+* **Bigram (2-gram)** → two continuous words
+* **Trigram (3-gram)** → three continuous words
+
+This technique is also called **Bag of N-grams**.
+
+### Why N-grams are Needed?
+
+Earlier techniques (Bag of Words / Unigram) had problems:
+
+* ❌ Ignore word order
+* ❌ Miss important phrases like:
+
+  * "not good"
+  * "very bad"
+  * "no improvement"
+
+👉 Word order matters in language.
+👉 N-grams solve this problem **partially**.
+
+---
+
+## 2️⃣ How N-grams Work (Intuition)
+
+### Sentence
+
+```
+people watch campus
+```
+
+### Unigrams
+
+```
+people | watch | campus
+```
+
+### Bigrams
+
+```
+people watch | watch campus
+```
+
+### Trigrams
+
+```
+people watch campus
+```
+
+⚠️ **Important Rule:**
+
+* Words must be **continuous** (no skipping words).
+
+---
+
+## 3️⃣ Example Dataset
+
+| Document | Sentence             |
+| -------- | -------------------- |
+| D1       | people watch campus  |
+| D2       | watch campus campus  |
+| D3       | people write comment |
+| D4       | campus write comment |
+
+### Bigram Vocabulary (Bag of Bigrams)
+
+* people watch
+* watch campus
+* campus campus
+* people write
+* write comment
+* campus write
+
+👉 Vocabulary size increases compared to unigrams.
+
+---
+
+## 4️⃣ Vector Representation with Bigrams
+
+Each document is represented using **frequency of bigrams**.
+
+### Example for D1: "people watch campus"
+
+* people watch → 1
+* watch campus → 1
+* others → 0
+
+✔ Fixed-size vector
+✔ Captures local word order
+
+---
+
+## 5️⃣ N-grams using Scikit-Learn
+
+### Important Parameter: `ngram_range`
+
+```python
+from sklearn.feature_extraction.text import CountVectorizer
+
+# Unigram (Bag of Words)
+CountVectorizer(ngram_range=(1,1))
+
+# Bigram
+CountVectorizer(ngram_range=(2,2))
+
+# Unigram + Bigram
+CountVectorizer(ngram_range=(1,2))
+
+# Trigram
+CountVectorizer(ngram_range=(3,3))
+```
+
+### Example Code (Bigram)
+
+```python
+documents = [
+    "people watch campus",
+    "watch campus campus",
+    "people write comment",
+    "campus write comment"
+]
+
+vectorizer = CountVectorizer(ngram_range=(2,2))
+X = vectorizer.fit_transform(documents)
+
+print(vectorizer.vocabulary_)
+print(X.toarray())
+```
+
+---
+
+## 6️⃣ Why N-grams are Better than Bag of Words?
+
+### Key Example
+
+**Sentence 1:**
+
+```
+This is a very good movie
+```
+
+**Sentence 2:**
+
+```
+This is not a good movie
+```
+
+### Problem with Unigrams / BoW
+
+Both sentences contain:
+
+```
+this, is, good, movie
+```
+
+👉 Vectors look very similar
+👉 Meanings are opposite
+
+### Using Bigrams
+
+* Sentence 1 bigram → **very good**
+* Sentence 2 bigram → **not good**
+
+✔ Meaning difference is captured
+✔ Vectors move farther apart in vector space
+
+---
+
+## 7️⃣ Benefits of N-grams ✅
+
+* Captures word order (local context)
+* Handles negation ("not good")
+* Better semantic representation than unigrams
+* Easy to understand and implement
+* Very useful in:
+
+  * Sentiment Analysis
+  * Text Classification
+
+---
+
+## 8️⃣ Disadvantages of N-grams ❌
+
+### 1. Vocabulary Explosion
+
+* Unigrams → small vocabulary
+* Bigrams → larger
+* Trigrams → very large
+
+👉 High memory and computation cost
+
+### 2. Sparse Vectors
+
+* More features → more zeros
+* Hard to handle large datasets
+
+### 3. Out-of-Vocabulary (OOV) Problem
+
+* New phrase at prediction time → ignored
+
+### 4. No Deep Semantic Understanding
+
+Example:
+
+```
+beautiful ≠ gorgeous
+```
+
+N-grams treat them as different words.
+
+👉 This is solved using **Word Embeddings**.
+
+---
+
+## 9️⃣ Summary Till Now
+
+| Technique    | Order     | Context    | Used in Practice |
+| ------------ | --------- | ---------- | ---------------- |
+| One Hot      | ❌         | ❌          | ❌                |
+| Bag of Words | ❌         | ❌          | ✅                |
+| N-grams      | ✅ (local) | ⚠️ partial | ✅                |
+
+---
+
+## 🔟 TF-IDF (Why We Need It)
+
+### Problem with BoW & N-grams
+
+* All words treated as equally important
+
+Example words:
+
+```
+people, watch, campus
+```
+
+But in reality:
+
+* Some words are important
+* Some words are common and useless
+
+👉 **TF-IDF fixes this problem**.
+
+---
+
+## 1️⃣1️⃣ What is TF-IDF?
+
+**TF-IDF = Term Frequency × Inverse Document Frequency**
+
+It gives higher weight to:
+
+* Words frequent in a document
+* Words rare across the corpus
+
+---
+
+## 1️⃣2️⃣ Term Frequency (TF)
+
+### Formula
+
+```
+TF(word) = (Number of times word appears in document)
+           -------------------------------------------
+           (Total words in document)
+```
+
+👉 Measures importance **inside a document**
+
+---
+
+## 1️⃣3️⃣ Inverse Document Frequency (IDF)
+
+### Formula
+
+```
+IDF(word) = log(
+    Total number of documents
+    -------------------------
+    Number of documents containing the word
+)
+```
+
+👉 Measures **rarity across corpus**
+
+### Intuition
+
+* Word in every document → IDF ≈ 0
+* Word in few documents → IDF is high
+
+---
+
+## 1️⃣4️⃣ Why Log is Used in IDF?
+
+* Without log → rare words get very large values
+* TF becomes meaningless
+
+Log function:
+
+* Smooths extreme values
+* Balances TF and IDF
+
+---
+
+## 1️⃣5️⃣ TF-IDF Final Formula
+
+```
+TF-IDF(word) = TF(word) × IDF(word)
+```
+
+👉 Final value shows:
+
+* Importance in the document
+* Importance in the corpus
+
+---
+
+## 1️⃣6️⃣ TF-IDF using Scikit-Learn
+
+```python
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(documents)
+
+print(vectorizer.vocabulary_)
+print(X.toarray())
+```
+
+### Note on sklearn IDF
+
+Scikit-learn uses **smoothed IDF**:
+
+```
+idf = log((N + 1) / (df + 1)) + 1
+```
+
+* Prevents zero values
+* This is only an implementation detail
+
+---
+
+## 1️⃣7️⃣ Where TF-IDF is Used?
+
+* Search engines (Google)
+* Information Retrieval
+* Text Classification
+* Document Similarity
+
+---
+
+## 1️⃣8️⃣ Custom Features (Hand-crafted Features)
+
+Sometimes built-in techniques are not enough.
+
+👉 We create **custom features** using domain knowledge.
+
+### Examples (Sentiment Analysis)
+
+* Number of positive words
+* Number of negative words
+* Ratio of positive / negative words
+* Total word count
+* Average word length
+* Character count
+
+### Why Custom Features Matter?
+
+* You understand the problem better than the algorithm
+* Domain knowledge improves accuracy
+
+---
+
+## 1️⃣9️⃣ Hybrid Features (Very Important)
+
+In real-world ML projects, we use:
+
+```
+BoW / N-grams / TF-IDF
++
+Custom Features
+```
+
+👉 This is called **Hybrid Features**
+👉 Used in **99% of real ML projects**
+
+---
+
+## 2️⃣0️⃣ Final Big Picture
+
+| Technique       | Solves What                   |
+| --------------- | ----------------------------- |
+| BoW             | Fixed size, frequency         |
+| N-grams         | Word order, phrases           |
+| TF-IDF          | Word importance               |
+| Custom Features | Domain intelligence           |
+| Word Embeddings | Semantic meaning (NEXT VIDEO) |
+
+---
+
+📌 **Next Topic:** Word Embeddings (Word2Vec, GloVe, FastText)
+
+
 
 
 
