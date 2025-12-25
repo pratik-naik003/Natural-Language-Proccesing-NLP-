@@ -2721,3 +2721,426 @@ plt.show()
 * Two models: **CBOW & Skip-Gram**
 * **Gensim** makes implementation easy
 * Very important for **NLP, ML & Interviews**
+* 
+
+# 📘 Text Classification – Simple English Notes (ML + NLP)
+
+---
+
+## 1️⃣ What is Text Classification?
+
+**Text Classification** is a **supervised machine learning task** where:
+
+* **Input** → Text (word / sentence / document)
+* **Output** → A predefined **class / category**
+
+👉 The model reads text and decides which category it belongs to.
+
+### Example
+
+| Text                              | Output   |
+| --------------------------------- | -------- |
+| "This movie is amazing"           | Positive |
+| "Win money fast!!!"               | Spam     |
+| "Customer complaint about refund" | Support  |
+
+---
+
+## 2️⃣ What is Classification (Basic ML)?
+
+Classification is a **supervised ML problem** where:
+
+* Data has **labels**
+* Model learns a mapping from **input → class**
+
+### Examples (non-text)
+
+* Rain / No Rain
+* Cat / Dog
+* Disease / No Disease
+
+👉 When this is done on **text data**, it is called **Text Classification**.
+
+---
+
+## 3️⃣ Types of Text Classification
+
+### 🔹 1. Binary Classification
+
+Only **two classes**.
+
+Examples:
+
+* Spam / Not Spam
+* Positive / Negative
+* Fake / Real
+
+---
+
+### 🔹 2. Multi-Class Classification
+
+More than **two classes**, but only **one output**.
+
+Example – News classification:
+
+* Sports
+* Business
+* Politics
+* Entertainment
+
+---
+
+### 🔹 3. Multi-Label Classification
+
+One text can belong to **multiple classes**.
+
+Example:
+
+* Sports
+* Cricket
+* Sachin Tendulkar
+
+---
+
+## 4️⃣ Why Text Classification is Important?
+
+Text Classification is one of the **most used NLP tasks** because:
+
+* Same logic works across many domains
+* Very flexible
+* Scales to millions of texts
+
+---
+
+## 5️⃣ Applications of Text Classification
+
+### 📧 Email Spam Detection
+
+* Spam
+* Not Spam
+
+### 💬 Customer Support Automation
+
+* Sales
+* Support
+* Complaint
+
+### 😊 Sentiment Analysis
+
+* Positive
+* Negative
+* Neutral
+
+Used heavily in:
+
+* Amazon
+* Flipkart
+* Product review systems
+
+### 🌍 Language Detection
+
+* English
+* Hindi
+* Marathi
+* French
+
+### 📰 Fake News Detection
+
+* Fake
+* Real
+
+Used by:
+
+* WhatsApp
+* Facebook
+* Twitter
+
+### 🚫 Toxic / Vulgar Content Detection
+
+Automatically removes abusive or offensive text.
+
+---
+
+## 6️⃣ Text Classification Pipeline (MOST IMPORTANT)
+
+```
+Text Data
+   ↓
+Data Collection
+   ↓
+Text Preprocessing
+   ↓
+Text Vectorization
+   ↓
+Model Training
+   ↓
+Evaluation
+   ↓
+Deployment
+```
+
+---
+
+## 7️⃣ Step-by-Step Pipeline Explained
+
+### 🔹 1. Data Acquisition
+
+Get data from:
+
+* CSV files
+* APIs
+* Web scraping
+* Public datasets (IMDB, Kaggle)
+
+---
+
+### 🔹 2. Text Preprocessing
+
+Clean raw text:
+
+✔ Lowercasing
+✔ Remove HTML tags
+✔ Remove punctuation
+✔ Remove stopwords
+✔ Stemming / Lemmatization
+
+Example:
+
+```
+"This MOVIE is <br> GREAT!!!"
+→ "movie great"
+```
+
+---
+
+### 🔹 3. Text Vectorization (Text → Numbers)
+
+ML models **cannot read text**, only numbers.
+
+Common techniques:
+
+* Bag of Words (BoW)
+* N-grams
+* TF-IDF
+* Word2Vec
+
+---
+
+### 🔹 4. Modeling
+
+Apply ML algorithms:
+
+* Naive Bayes
+* Logistic Regression
+* SVM
+* Random Forest
+
+---
+
+### 🔹 5. Evaluation
+
+Metrics used:
+
+* Accuracy
+* Precision
+* Recall
+* F1-Score
+* Confusion Matrix
+
+---
+
+### 🔹 6. Deployment
+
+Deploy model using:
+
+* Backend API
+* Cloud (AWS / GCP)
+* Integration into applications
+
+---
+
+## 8️⃣ Different Approaches to Text Classification
+
+### 🔹 1. Heuristic (Rule-Based) Approach
+
+No ML, no DL.
+
+Example:
+
+* Count positive words
+* Count negative words
+* Compare ratio
+
+Used when:
+
+* Very little data
+* Highly specific domain
+
+❌ Rarely used today
+
+---
+
+### 🔹 2. Using Ready-Made APIs
+
+APIs from:
+
+* Google
+* AWS
+* Azure
+* HuggingFace
+
+✅ Fast
+❌ Costly
+❌ No control
+
+---
+
+### 🔹 3. Machine Learning Approach ✅
+
+Most common and practical.
+
+Pipeline:
+
+* Preprocessing
+* Vectorization
+* ML algorithm
+
+---
+
+### 🔹 4. Deep Learning Approach
+
+Uses:
+
+* RNN
+* LSTM
+* CNN
+* Transformers (BERT)
+
+Needs:
+
+* Large datasets
+* More compute power
+
+---
+
+## 9️⃣ Machine Learning Approach (Hands-On)
+
+### Dataset: IMDB Movie Reviews
+
+* 50,000 reviews
+* Labels: Positive / Negative
+
+---
+
+### 🔹 Step 1: Train-Test Split
+
+```python
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+```
+
+---
+
+### 🔹 Step 2: Bag of Words (BoW)
+
+```python
+from sklearn.feature_extraction.text import CountVectorizer
+
+cv = CountVectorizer(max_features=5000)
+X_train_vec = cv.fit_transform(X_train)
+X_test_vec = cv.transform(X_test)
+```
+
+---
+
+### 🔹 Step 3: Train Model (Naive Bayes)
+
+```python
+from sklearn.naive_bayes import MultinomialNB
+
+model = MultinomialNB()
+model.fit(X_train_vec, y_train)
+```
+
+---
+
+### 🔹 Step 4: Evaluation
+
+```python
+from sklearn.metrics import accuracy_score
+
+y_pred = model.predict(X_test_vec)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+```
+
+---
+
+## 🔟 Using N-grams
+
+```python
+CountVectorizer(ngram_range=(1,2))
+```
+
+⚠️ Higher n-grams → higher memory usage.
+
+---
+
+## 1️⃣1️⃣ Using TF-IDF
+
+```python
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+tfidf = TfidfVectorizer(max_features=5000)
+X_train_tfidf = tfidf.fit_transform(X_train)
+X_test_tfidf = tfidf.transform(X_test)
+```
+
+👉 TF-IDF usually gives **better results** than BoW.
+
+---
+
+## 1️⃣2️⃣ Using Word2Vec
+
+### Idea
+
+* Convert words into vectors
+* Average vectors to represent a sentence
+
+```python
+sentence_vector = (vec(word1) + vec(word2) + vec(word3)) / 3
+```
+
+⚠️ Needs:
+
+* Large dataset
+* Proper vocabulary match
+
+---
+
+## 1️⃣3️⃣ Practical Advice (VERY IMPORTANT)
+
+✔ Start with simple ML models
+✔ Do feature engineering + ML together
+✔ Do NOT jump directly to Deep Learning
+✔ Handle class imbalance
+✔ Solve many small projects
+
+> "Simple models + good features often beat complex models."
+
+---
+
+## 1️⃣4️⃣ Final Takeaway
+
+* Text Classification is a **core NLP skill**
+* Same pipeline works everywhere
+* Start with:
+
+  * BoW / TF-IDF
+  * Logistic Regression / Naive Bayes / Random Forest
+* Move to Deep Learning **only when needed**
+
+---
+
