@@ -3144,3 +3144,316 @@ sentence_vector = (vec(word1) + vec(word2) + vec(word3)) / 3
 
 ---
 
+# 📘 Parts of Speech (POS) Tagging – Simple English Notes
+
+## 1️⃣ What is POS Tagging?
+
+**POS Tagging (Part-of-Speech Tagging)** is an NLP task where:
+
+👉 Each word in a sentence is assigned a grammatical label
+(like noun, verb, adjective, pronoun, etc.)
+
+### Example
+
+**Sentence:**
+
+I will Google about Facebook
+
+**POS Tags:**
+
+* I → **PRONOUN**
+* will → **MODAL (AUX VERB)**
+* Google → **VERB**
+* about → **PREPOSITION**
+* Facebook → **PROPER NOUN**
+
+📌 POS tagging is done **word by word** and is **context-based**, not only dictionary-based.
+
+---
+
+## 2️⃣ What are Parts of Speech?
+
+Parts of Speech are categories of words based on their role in a sentence.
+
+| Category    | Examples         |
+| ----------- | ---------------- |
+| Noun        | boy, city, India |
+| Verb        | run, eat, Google |
+| Pronoun     | I, he, she       |
+| Adjective   | good, big        |
+| Adverb      | quickly          |
+| Preposition | in, on           |
+| Conjunction | and, but         |
+| Modal       | will, can        |
+
+---
+
+## 3️⃣ Why POS Tagging is Important?
+
+POS tagging helps machines understand **sentence structure (syntax)**.
+
+Without POS tagging:
+
+❌ Machine doesn’t know **who did what**
+❌ Complex NLP tasks fail
+
+👉 POS tagging is a **MANDATORY preprocessing step** in NLP.
+
+---
+
+## 4️⃣ Applications of POS Tagging
+
+### ✅ 1. Named Entity Recognition (NER)
+
+Used to extract:
+
+* Person
+* Location
+* Date
+* Organization
+
+**Example:**
+
+Rahul will visit Delhi on 30th March
+
+**Extracted Entities:**
+
+* Rahul → Person
+* Delhi → Location
+* 30th March → Date
+
+📌 POS tags help identify **proper nouns**.
+
+---
+
+### ✅ 2. Question Answering Systems
+
+Used in:
+
+* Chatbots
+* QA systems
+
+Helps to:
+
+* Understand question structure
+* Identify important words
+
+---
+
+### ✅ 3. Word Sense Disambiguation
+
+Same word, different meaning.
+
+**Example:**
+
+* I left the room → *left = verb*
+* The left of the room → *left = adjective*
+
+📌 POS tagging selects the correct meaning using context.
+
+---
+
+### ✅ 4. Chatbots & Virtual Assistants
+
+**User Input:**
+
+Book my ticket tomorrow
+
+POS tagging helps identify:
+
+* Action → book
+* Object → ticket
+* Time → tomorrow
+
+---
+
+## 5️⃣ POS Tagging Using spaCy (Code Demo)
+
+### 🔹 Step 1: Install spaCy
+
+```bash
+pip install spacy
+python -m spacy download en_core_web_sm
+```
+
+### 🔹 Step 2: Load spaCy Model
+
+```python
+import spacy
+nlp = spacy.load("en_core_web_sm")
+```
+
+### 🔹 Step 3: Create a Document
+
+```python
+doc = nlp("I will Google about Facebook")
+```
+
+### 🔹 Step 4: Access Words Like a List
+
+```python
+doc[0].text   # I
+doc[1].text   # will
+doc[-1].text  # Facebook
+```
+
+### 🔹 Step 5: Get POS Tags
+
+```python
+doc[0].pos_   # PRON
+doc[1].pos_   # AUX
+doc[2].pos_   # VERB
+```
+
+---
+
+## 6️⃣ Coarse-grained vs Fine-grained POS
+
+### 🔹 Coarse-grained POS (`pos_`)
+
+Broad categories:
+
+* NOUN
+* VERB
+* ADJ
+
+### 🔹 Fine-grained POS (`tag_`)
+
+Detailed grammar:
+
+* NN
+* NNP
+* VBD
+* VBG
+
+**Example:**
+
+```python
+token = doc[0]
+print(token.pos_)   # PRON
+print(token.tag_)   # PRP
+```
+
+### 🔹 Explain POS Tag Meaning
+
+```python
+spacy.explain("PRP")
+```
+
+Output:
+
+```
+personal pronoun
+```
+
+---
+
+## 7️⃣ Loop Through Entire Sentence
+
+```python
+for token in doc:
+    print(token.text, "->", token.pos_, token.tag_, spacy.explain(token.tag_))
+```
+
+**Output:**
+
+```
+I -> PRON PRP personal pronoun
+will -> AUX MD modal auxiliary
+Google -> VERB VB verb
+about -> ADP IN preposition
+Facebook -> PROPN NNP proper noun
+```
+
+---
+
+## 8️⃣ Context-Based POS Tagging (Very Important)
+
+Same word can have different POS depending on sentence.
+
+```python
+doc1 = nlp("I left the room")
+doc2 = nlp("The left of the room")
+
+print(doc1[1].pos_)  # VERB
+print(doc2[1].pos_)  # NOUN
+```
+
+👉 spaCy understands **context**, not just word meaning.
+
+---
+
+## 9️⃣ POS Tagging Visualization (spaCy)
+
+```python
+from spacy import displacy
+
+doc = nlp("The quick brown fox jumps over the lazy dog")
+displacy.render(doc, style="dep", jupyter=True)
+```
+
+📌 Shows visual POS + dependency relations
+
+### Custom Styling
+
+```python
+options = {"compact": True, "bg": "#ffffff", "color": "#000000"}
+displacy.render(doc, style="dep", options=options, jupyter=True)
+```
+
+---
+
+## 🔟 How POS Tagging Works Internally (Theory)
+
+Most POS taggers are based on:
+
+### 🔹 Hidden Markov Model (HMM)
+
+HMM uses:
+
+**1. Emission Probability**
+
+* Probability of a word given a POS tag
+
+**2. Transition Probability**
+
+* Probability of next POS given current POS
+
+📌 Model is trained on **labeled sentences**.
+
+---
+
+## 🔟 Optimization: Viterbi Algorithm
+
+### 🔹 Why Not Brute Force?
+
+For:
+
+* N words
+* T POS tags
+
+Total combinations = **Tⁿ** ❌ (Impossible)
+
+---
+
+### 🔹 What Viterbi Algorithm Does
+
+✔ Finds the **most probable POS sequence**
+✔ Uses **dynamic programming**
+✔ Avoids checking all combinations
+
+👉 Keeps only best path at each step
+👉 Discards low-probability paths
+
+### 🔹 Final Output
+
+After reaching the **END** state:
+
+* Backtrack the best path
+* That path = **final POS tagging**
+
+---
+
+✅ **This completes POS Tagging – from basics to theory + code.**
+
+
