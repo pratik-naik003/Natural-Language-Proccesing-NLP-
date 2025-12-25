@@ -3456,4 +3456,369 @@ After reaching the **END** state:
 
 ✅ **This completes POS Tagging – from basics to theory + code.**
 
+# 📘 Hidden Markov Model (HMM) & Viterbi Algorithm
+
+## (POS Tagging – Detailed & Simple Explanation)
+
+---
+
+## 1️⃣ Why Do We Need HMM for POS Tagging?
+
+### Problem
+
+Given a sentence:
+
+```
+I will book a ticket
+```
+
+We want:
+
+```
+I      → PRON
+will   → AUX
+book   → VERB
+a      → DET
+ticket → NOUN
+```
+
+### Why simple methods fail?
+
+❌ Rule-based systems fail
+❌ Dictionary lookup fails (same word, different meaning)
+
+👉 So we need a **probability-based model**
+
+✔ That model is **Hidden Markov Model (HMM)**
+
+---
+
+## 2️⃣ What is a Hidden Markov Model (HMM)?
+
+### Simple Definition
+
+Hidden Markov Model (HMM) is a **probabilistic model** where:
+
+* We can see the **words**
+* We cannot directly see the **POS tags**
+* POS tags are **hidden states**
+
+👉 That is why it is called a **Hidden** Markov Model.
+
+---
+
+## 3️⃣ HMM Components (VERY IMPORTANT)
+
+HMM has **three main components** 👇
+
+### 🔹 1. States (Hidden States)
+
+These are **POS tags**:
+
+```
+NOUN, VERB, ADJ, ADV, PRON, AUX
+```
+
+* We do **not** observe them directly
+
+---
+
+### 🔹 2. Observations (Visible)
+
+These are the **words** in the sentence:
+
+```
+I, will, book, ticket
+```
+
+* We **can see** these
+
+---
+
+### 🔹 3. Probabilities (The Brain of HMM)
+
+HMM works using **probabilities**.
+
+There are **two important probabilities** 👇
+
+---
+
+## 4️⃣ Emission Probability (Word given POS)
+
+### Definition
+
+Probability that a **POS tag emits a word**
+
+### Mathematical Form
+
+```
+P(word | POS)
+```
+
+### Example
+
+| POS  | Word | Probability |
+| ---- | ---- | ----------- |
+| NOUN | book | 0.3         |
+| VERB | book | 0.6         |
+
+👉 Means:
+
+* Word **"book"** is more likely a **VERB** than a **NOUN**
+
+---
+
+## 5️⃣ Transition Probability (POS → POS)
+
+### Definition
+
+Probability of moving from **one POS tag to another**
+
+### Mathematical Form
+
+```
+P(POS₂ | POS₁)
+```
+
+### Example
+
+| From → To   | Probability |
+| ----------- | ----------- |
+| PRON → VERB | 0.6         |
+| PRON → NOUN | 0.1         |
+| VERB → NOUN | 0.5         |
+
+👉 English grammar is captured using **probability**
+
+---
+
+## 6️⃣ HMM Assumptions (Exam Gold ⭐)
+
+### 🔹 1. Markov Assumption
+
+Current POS depends **only on the previous POS**
+
+```
+P(tag₃ | tag₁, tag₂) ≈ P(tag₃ | tag₂)
+```
+
+---
+
+### 🔹 2. Output Independence Assumption
+
+Word depends **only on its POS tag**
+
+```
+P(word | POS)
+```
+
+Not on other words.
+
+---
+
+## 7️⃣ POS Tagging with HMM (Big Picture)
+
+Given:
+
+* Sentence = **words (observations)**
+* POS tags = **hidden states**
+* Emission + Transition probabilities
+
+### Goal
+
+👉 Find the **most probable sequence of POS tags**
+
+---
+
+## 8️⃣ Why Brute Force Does NOT Work ❌
+
+If:
+
+* Sentence length = 10 words
+* POS tags = 12
+
+Total combinations:
+
+```
+12¹⁰ = 61 billion
+```
+
+❌ Impossible to compute
+
+👉 **Solution → Viterbi Algorithm**
+
+---
+
+## 9️⃣ What is the Viterbi Algorithm?
+
+### Simple Definition
+
+Viterbi is a **dynamic programming algorithm** that finds the:
+
+✔ Most probable sequence of hidden states
+
+### Why use it?
+
+✔ Fast
+✔ Efficient
+✔ Used with HMM
+
+---
+
+## 🔟 Viterbi Algorithm – Step-by-Step
+
+We use the sentence:
+
+```
+will Google campus
+```
+
+Allowed POS tags:
+
+```
+MODAL, VERB, NOUN
+```
+
+---
+
+### 🔹 Step 1: Initialization
+
+For the **first word**:
+
+```
+V[1][tag] = P(tag | START) × P(word | tag)
+```
+
+Example:
+
+```
+P(MODAL | START) × P(will | MODAL)
+```
+
+---
+
+### 🔹 Step 2: Recursion (Main Step)
+
+For each next word:
+
+```
+V[t][tag] = max(
+    V[t-1][prev_tag] ×
+    P(tag | prev_tag) ×
+    P(word | tag)
+)
+```
+
+✔ Try all previous tags
+✔ Keep only the **best path**
+
+---
+
+### 🔹 Step 3: Termination
+
+At the last word:
+
+```
+max(V[last][tag] × P(END | tag))
+```
+
+---
+
+### 🔹 Step 4: Backtracking
+
+* Store best previous tag
+* Trace path backwards
+
+👉 This gives the **final POS tag sequence**
+
+---
+
+## 🔢 Mini Numerical Example (Intuition)
+
+For word = **book**
+
+### Emission Probabilities
+
+| Tag  | Probability |
+| ---- | ----------- |
+| NOUN | 0.3         |
+| VERB | 0.6         |
+
+### Transition from PRON
+
+| Transition  | Probability |
+| ----------- | ----------- |
+| PRON → VERB | 0.6         |
+| PRON → NOUN | 0.2         |
+
+### Scores
+
+```
+VERB = 0.6 × 0.6 = 0.36
+NOUN = 0.2 × 0.3 = 0.06
+```
+
+✔ Choose **VERB**
+
+---
+
+## 🔟 Why Viterbi is Efficient?
+
+Instead of:
+
+❌ Trying all possible paths
+
+It does:
+
+✔ Keeps only best path at each step
+✔ Discards low-probability paths
+
+### Time Complexity
+
+```
+O(T × N²)
+```
+
+Where:
+
+* **T** = number of words
+* **N** = number of POS tags
+
+---
+
+## 1️⃣1️⃣ POS Tagging Flow (One Line)
+
+```
+Sentence
+ ↓
+HMM (Probabilities)
+ ↓
+Viterbi Algorithm
+ ↓
+Best POS Tag Sequence
+```
+
+---
+
+## 1️⃣2️⃣ Do Real Libraries Use This?
+
+✔ **NLTK** – HMMTagger
+✔ **spaCy** – advanced models internally
+✔ **Stanford NLP** – earlier versions
+
+---
+
+## 1️⃣3️⃣ Interview / Exam Ready Summary ⭐
+
+* HMM is a probabilistic model
+* POS tags = hidden states
+* Words = observations
+* Uses emission + transition probabilities
+* Viterbi finds most probable tag sequence
+* Avoids exponential complexity
+* Uses dynamic programming
+
+---
+
+✅ **End of Notes – Ready for Exams, Interviews & Projects**
 
